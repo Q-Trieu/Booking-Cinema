@@ -30,72 +30,94 @@ const RegisterForm: React.FC = () => {
     }
   };
 
-  const handleLogin = () => {
-    console.log('Chuyển hướng tới trang đăng nhập');
+  const handleGoogleLogin = async () => {
+    try {
+      const response = await axios.get('/api/auth/google-login');
+      window.location.href = response.data.redirect_url;
+    } catch {
+      setErrorMessage('Đăng nhập bằng Google thất bại');
+    }
+  };
+
+  const handleFacebookLogin = async () => {
+    try {
+      const response = await axios.get('/api/auth/facebook-login');
+      window.location.href = response.data.redirect_url;
+    } catch {
+      setErrorMessage('Đăng nhập bằng Facebook thất bại');
+    }
   };
 
   return (
-    <div style={{ maxWidth: '400px', margin: '0 auto', padding: '20px', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <img src="path_to_your_image" alt="Characters" style={{ width: '100%' }} />
+    <div className="max-w-md mx-auto p-6 border border-gray-300 rounded-lg">
+      <div className="text-center mb-6">
+        <img src="path_to_your_image" alt="Characters" className="w-full" />
       </div>
-      <h2>Tạo tài khoản</h2>
-      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
-      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
-      <div style={{ marginBottom: '10px' }}>
-        <label>Họ và tên</label>
+      <h2 className="text-2xl font-bold mb-4">Tạo tài khoản</h2>
+      {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
+      <div className="mb-4">
+        <label className="block mb-1">Họ và tên</label>
         <input
           type="text"
           placeholder="Nhập họ và tên"
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>Email</label>
+      <div className="mb-4">
+        <label className="block mb-1">Email</label>
         <input
           type="email"
           placeholder="Nhập Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>Số điện thoại</label>
+      <div className="mb-4">
+        <label className="block mb-1">Số điện thoại</label>
         <input
           type="text"
           placeholder="Nhập số điện thoại"
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
-      <div style={{ marginBottom: '10px' }}>
-        <label>Mật khẩu</label>
+      <div className="mb-4">
+        <label className="block mb-1">Mật khẩu</label>
         <input
           type="password"
           placeholder="Nhập mật khẩu"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ccc' }}
+          className="w-full p-2 border border-gray-300 rounded"
         />
       </div>
       <button
         onClick={handleRegister}
-        style={{ width: '100%', padding: '10px', backgroundColor: '#007BFF', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+        className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
       >
         ĐĂNG KÝ
       </button>
-      <div style={{ textAlign: 'center', marginTop: '10px' }}>
-        <span>Bạn đã có tài khoản?</span>
-        <button
-          onClick={handleLogin}
-          style={{ width: '100%', padding: '10px', backgroundColor: '#007BFF', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', marginTop: '10px' }}
-        >
-          ĐĂNG NHẬP
-        </button>
+      <div className="text-center mt-4">
+        <span>Hoặc đăng nhập bằng:</span>
+        <div className="flex justify-around mt-4">
+          <button
+            onClick={handleGoogleLogin}
+            className="p-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Google
+          </button>
+          <button
+            onClick={handleFacebookLogin}
+            className="p-2 bg-blue-700 text-white rounded hover:bg-blue-800"
+          >
+            Facebook
+          </button>
+        </div>
       </div>
     </div>
   );

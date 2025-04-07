@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import FacebookLogin from '@greatsumini/react-facebook-login';
+import { GoogleLogin } from '@react-oauth/google';
 
 const LoginForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -35,6 +37,42 @@ const LoginForm: React.FC = () => {
       setSuccessMessage('');
     }
   };
+
+  const handleFacebookLogin = async (response: { accessToken: string }) => {
+    try {
+      const res = await axios.post('/api/auth/facebook-login', {
+        accessToken: response.accessToken,
+      });
+
+      setSuccessMessage(res.data.message);
+      setError('');
+      console.log('Đăng nhập Facebook thành công:', res.data);
+    } catch (err: unknown) {
+      console.error('Lỗi đăng nhập Facebook:', err);
+      setError('Đăng nhập Facebook thất bại');
+    }
+  };
+
+  const handleGoogleLogin = async (credentialResponse: { credential?: string }) => {
+      if (!credentialResponse.credential) {
+        console.error('Lỗi đăng nhập Google: Credential không hợp lệ');
+        setError('Đăng nhập Google thất bại');
+        return;
+      }
+  
+      try {
+        const res = await axios.post('/api/auth/google-login', {
+          token: credentialResponse.credential,
+        });
+  
+        setSuccessMessage(res.data.message);
+        setError('');
+        console.log('Đăng nhập Google thành công:', res.data);
+      } catch (err: unknown) {
+        console.error('Lỗi đăng nhập Google:', err);
+        setError('Đăng nhập Google thất bại');
+      }
+    };
 
   return (
     <div className="max-w-md mx-auto p-6 border border-gray-300 rounded-lg">
@@ -77,6 +115,36 @@ const LoginForm: React.FC = () => {
       >
         ĐĂNG NHẬP
       </button>
+
+      <div className="mt-4">
+        <h3 className="text-center font-medium mb-2">Hoặc đăng nhập bằng</h3>
+        <div className="flex justify-center gap-4">
+          <FacebookLogin
+            appId="YOUR_FACEBOOK_APP_ID"
+            onSuccess={handleFacebookLogin}
+            onFail={(error) => {
+              console.error('Lỗi đăng nhập Facebook:', error);
+              setError('Đăng nhập Facebook thất bại');
+            }}
+            onProfileSuccess={(profile) => console.log('Facebook profile:', profile)}
+            render={({ onClick }) => (
+              <button
+                onClick={onClick}
+                className="p-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              >
+                Facebook
+              </button>
+            )}
+          />
+          <GoogleLogin
+            onSuccess={handleGoogleLogin}
+            onError={() => {
+              console.error('Lỗi đăng nhập Google');
+              setError('Đăng nhập Google thất bại');
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
