@@ -393,7 +393,6 @@ const Movies: React.FC = () => {
       </main>
       
       <Footer />
-      <BackToTop />
     </div>
   );
 };
